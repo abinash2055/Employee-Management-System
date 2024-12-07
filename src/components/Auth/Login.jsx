@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Login = () => {
+const Login = ({ handleLogin }) => {
   // Two way Binding
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -9,7 +9,7 @@ const Login = () => {
     e.preventDefault; //it stops default behavior
     console.log("Email is", email);
     console.log("Password is", password);
-
+    handleLogin(email, password);
     setEmail("");
     setPassword("");
   };
@@ -46,7 +46,7 @@ const Login = () => {
           />
 
           <button
-            className=" text-white outline-none border-none bg-emerald-600 text-xl py-4 px-5 rounded-full placeholder:text-white mt-5"
+            className=" text-white outline-none border-none bg-emerald-600 text-xl py-4 px-5 w-full rounded-full placeholder:text-white mt-5"
             type="submit"
           >
             Log In
