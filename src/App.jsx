@@ -6,36 +6,30 @@ import { getLocalStorage, setLocalStorage } from "./utils/localStorage";
 import { AuthContext } from "./context/AuthProvider";
 
 const App = () => {
-  // State for logged-in user role and data
   const [user, setUser] = useState(null);
   const [loggedInUserData, setLoggedInUserData] = useState(null);
+  const [userData, setUserData] = useContext(AuthContext);
 
-  // Context for accessing employees and admin data
-  const authData = useContext(AuthContext);
-
-  // Initialize Local Storage
   useEffect(() => {
     setLocalStorage();
     getLocalStorage();
   }, []);
 
-  // Check if a user is already logged in
   useEffect(() => {
     const loggedInUser = localStorage.getItem("loggedInUser");
     if (loggedInUser) {
-      const userData = JSON.parse(loggedInUser);
-      setUser(userData.role);
-      setLoggedInUserData(userData.data);
+      const parsedData = JSON.parse(loggedInUser);
+      setUser(parsedData.role);
+      setLoggedInUserData(parsedData.data || null);
     }
   }, []);
 
-  // Handle Login Logic
   const handleLogin = (email, password) => {
     if (email === "admin@me.com" && password === "123") {
       setUser("admin");
       localStorage.setItem("loggedInUser", JSON.stringify({ role: "admin" }));
-    } else if (authData) {
-      const employee = authData.employees?.find(
+    } else if (userData) {
+      const employee = userData.find(
         (e) => email === e.email && password === e.password
       );
       if (employee) {
@@ -55,9 +49,9 @@ const App = () => {
     <>
       {!user ? <Login handleLogin={handleLogin} /> : null}
       {user === "admin" ? (
-        <AdminDashboard />
+        <AdminDashboard changeUser={setUser} />
       ) : user === "employee" ? (
-        <EmployeeDashboard data={loggedInUserData} />
+        <EmployeeDashboard data={loggedInUserData} changeUser={setUser} />
       ) : null}
     </>
   );
